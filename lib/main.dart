@@ -47,12 +47,31 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState(){
     super.initState();
     _refreshJournals();
+    // ignore: avoid_print
     print("..number of items ${_journals.length}");
+  }
+
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+
+  void _showForm(int ? id) async {
+    if (id != null ) {
+      final existingJournal = _journals.firstWhere((element) => element['id'] == id );
+      _titleController.text = existingJournal['title'];
+      _descriptionController.text = existingJournal['description'];
+    }
   }
   
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('SQL'),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child:  const Icon(Icons.add),
+        onPressed: () => _showForm(null),
+      ),
+    );
   }
 }
