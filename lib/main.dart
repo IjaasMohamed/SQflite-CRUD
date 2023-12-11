@@ -54,6 +54,11 @@ class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
+  Future <void> _addItem() async {
+    await SQLHelper.createItem(_titleController.text, _descriptionController.text);
+    _refreshJournals();
+  }
+
   void _showForm(int ? id) async {
     if (id != null ) {
       final existingJournal = _journals.firstWhere((element) => element['id'] == id );
@@ -89,8 +94,22 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           const SizedBox(
             height: 20,
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (id == null ) {
+                await _addItem();
+              }
+              if (id != null) {
+           //     await _updateItem();
+              }
+              _titleController.text = '';
+              _descriptionController.text = '';
+
+              Navigator.of(context).pop();
+            }, child: Text(id == null ? 'Create New' : 'Update'),
           )
-        ]
+        ],
       ),
     )
   );
@@ -102,6 +121,17 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('SQL'),
+      ),
+      body: ListView.builder(
+        itemCount: _journals.length,
+        itemBuilder: (context, index) => Card(
+          color: Colors.orange[200],
+          margin: const EdgeInsets.all(15),
+          child: ListTile(
+            title: Text(_journals[index]['title']),
+            subtitle: Text(_journals[index]['description']),
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         child:  const Icon(Icons.add),
